@@ -224,3 +224,68 @@ CREATE TABLE
 INSERT INTO
     `game_console` (`id`, `console_id`, `jeu_id`)
 VALUES (1, 6, 1), (2, 1, 2), (3, 2, 2), (4, 4, 2), (5, 5, 2), (6, 7, 2), (7, 1, 3), (8, 2, 3), (9, 4, 3), (10, 5, 3), (11, 7, 3), (12, 1, 4), (13, 2, 4), (14, 4, 4), (15, 5, 4), (16, 7, 4), (17, 1, 5), (18, 2, 5), (19, 3, 5), (20, 4, 5), (21, 5, 5), (22, 7, 5), (23, 1, 6), (24, 2, 6), (25, 4, 6), (26, 5, 6), (27, 7, 6), (28, 6, 7), (29, 6, 8), (30, 1, 9), (31, 2, 9), (32, 3, 9), (33, 4, 9), (34, 5, 9), (35, 7, 9), (36, 6, 10), (37, 1, 11), (38, 5, 11), (39, 7, 11), (40, 1, 12), (41, 5, 12), (42, 7, 12), (43, 1, 13), (44, 2, 13), (45, 3, 13), (46, 4, 13), (47, 5, 13), (48, 7, 13), (49, 6, 14);
+
+SELECT
+    jeu.id AS jeu_id,
+    jeu.image_path,
+    jeu.titre,
+    jeu.description,
+    jeu.date_sortie,
+    restriction.id AS age_id,
+    restriction.label AS age_label,
+    restriction.image_path AS age_image,
+    console.id,
+    console.label,
+    game_console.id,
+    game_console.console_id,
+    game_console.jeu_id,
+    note.id AS note_id,
+    note.note_media,
+    note.note_utilisateur
+FROM jeu
+    INNER JOIN restriction_age as restriction ON jeu.id = restriction.id
+    INNER JOIN console ON jeu.id = console.id
+    INNER JOIN game_console ON jeu.id = game_console.id
+    INNER JOIN note ON jeu.id = jeu.id
+WHERE jeu.id = jeu.id;
+
+SELECT
+    jeu.id AS jeu_id,
+    jeu.titre AS titre,
+    jeu.image_path AS jeu_img,
+    jeu.description AS jeu_descr,
+    jeu.date_sortie AS date_sortie,
+    jeu.age_id AS age_id,
+    restriction.label AS age_label,
+    restriction.image_path AS age_img,
+    console.id AS cons_id,
+    console.label AS cons_label,
+    note.note_media AS note_media,
+    note.note_utilisateur AS note_user
+FROM jeu
+    INNER JOIN restriction_age AS restriction ON jeu.age_id = restriction.id
+    INNER JOIN console
+    INNER JOIN game_console
+    INNER JOIN note ON jeu.note_id = note.id;
+
+SELECT
+    game_console.id AS game_console_id,
+    game_console.console_id,
+    game_console.jeu_id,
+    console.id,
+    console.label,
+    jeu.id,
+    jeu.image_path,
+    jeu.titre,
+    jeu.description,
+    jeu.prix
+FROM game_console
+    INNER JOIN console ON game_console.console_id = console.id
+    INNER JOIN jeu ON game_console.jeu_id = jeu.id;
+
+SELECT
+    c.label AS console,
+    COUNT(gc.jeu_id) AS nombre_jeux_compatibles
+FROM console c
+    LEFT JOIN game_console gc ON gc.console_id = c.id
+GROUP BY c.label;
